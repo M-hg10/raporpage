@@ -1,0 +1,117 @@
+# Muhasebe İş Akışı (E-Fatura Bilgi Çıkarımı)
+
+Bu iş akışı, e-fatura belgelerinin otomatik olarak yüklenmesi, OCR ile metne dönüştürülmesi, anlamlı verilerin çıkarılması ve sonucun bir webhook aracılığıyla dış sistemlere iletilmesini sağlar.
+
+---
+
+## 🛠️ Teknolojiler / Entegrasyonlar
+
+- **Mistral Upload & OCR**: Belge yükleme ve OCR işlemleri
+- **OpenRouter Chat Model**: Yapay zeka ile bilgi çıkarımı
+- **Webhook**: Sonuçların dış sistemlere gönderilmesi
+- **No-code/Low-code platformu**: Görsel iş akışı oluşturma aracı (örn. Pipedream, n8n, Automa vs.)
+
+---
+
+## 🔄 İş Akışı Adımları
+
+### 1. 📄 `efatura`
+E-fatura belgesi işleme için iş akışına gönderilir. Bu adım genellikle bir kullanıcı yüklemesi veya başka bir sistemden gelen veri olabilir.
+
+---
+
+### 2. ☁️ `Mistral Upload`
+Belge, Mistral sunucularına yüklenir.
+
+- **HTTP Yöntemi:** `POST`
+- **Amaç:** Belgeyi OCR için hazır hale getirmek
+
+---
+
+### 3. 🔐 `Mistral Signed URL`
+Yüklenen dosya için bir **Signed URL (imzalı bağlantı)** oluşturulur. Bu bağlantı, belgenin güvenli bir şekilde erişilmesini sağlar.
+
+- **1 item** ile çalışır (tekil belge)
+
+---
+
+### 4. 🧾 `Mistral DOC OCR`
+İmzalı bağlantı üzerinden OCR (Optik Karakter Tanıma) işlemi yapılır. Bu işlem, belgedeki metin içeriğini çıkarır.
+
+- **HTTP Yöntemi:** `POST`
+- **Çıktı:** JSON veya düz metin
+
+---
+
+### 5. 🧠 `Information Extractor`
+OCR sonucundan çıkarılan metin içinden anlamlı bilgiler ayrıştırılır.
+
+- Örnek bilgiler:
+  - Vergi Numarası
+  - Fatura Tarihi
+  - Tutar
+  - Firma Bilgileri
+
+---
+
+### 6. 🤖 `OpenRouter Chat Model`
+Bir LLM (büyük dil modeli) kullanılarak çıkarılan bilgiler işlenir, kategorize edilir veya daha anlaşılır hale getirilir.
+
+- **Model:** OpenRouter üzerinden erişilen bir sohbet modeli (örn. GPT-4, Claude, Mistral, vb.)
+- **Girdi:** OCR çıktısı + bilgi çıkarımı
+- **Çıktı:** Yapılandırılmış veri
+
+---
+
+### 7. 🔁 `Respond to Webhook`
+İşlenen veriler, belirlenen bir **webhook URL'sine** gönderilir.
+
+- Kullanım amaçları:
+  - ERP sistemine veri iletimi
+  - Veritabanına kayıt
+  - Bildirim tetikleme
+
+---
+
+## ✅ Örnek Çalıştırma
+
+### Tarih: Sep 3, 02:02:00  
+- **Durum:** Succeeded  
+- **Süre:** 28.611s  
+- **ID:** #2888  
+- **İşlenen Adet:** 1 belge
+
+---
+
+## 📈 Son 3 Başarılı Çalıştırma
+
+| Zaman         | Süre     | Sonuç     |
+|---------------|----------|-----------|
+| 02:01:54      | 1.499s   | Success   |
+| 02:01:49      | 365ms    | Success   |
+| 02:01:45      | 491ms    | Success   |
+
+---
+
+## 📌 Notlar
+
+- Bu iş akışı, e-fatura dışında farklı belge tiplerine de uyarlanabilir.
+- OCR sonuçları zayıfsa, belge kalitesi veya formatı kontrol edilmelidir.
+- Webhook güvenliği için doğrulama token'ı kullanılabilir.
+
+---
+
+## 👨‍💻 Geliştirme / Katkı
+
+Eğer bu iş akışını geliştirmek veya kendi ihtiyaçlarına göre uyarlamak istiyorsan:
+
+1. `editor` sekmesinden akış yapısını güncelle.
+2. `evaluations` sekmesinden model sonuçlarını test et.
+3. Daha gelişmiş bilgi çıkarımı için ek model eğitimi veya prompt mühendisliği yap.
+
+---
+
+## 📤 İletişim / Destek
+
+Herhangi bir sorun ya da entegrasyon desteği için ilgili geliştirici ekiple iletişime geçin.
+
